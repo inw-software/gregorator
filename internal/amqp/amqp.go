@@ -63,6 +63,7 @@ func (src amqpDataSource) Connect(ctx context.Context) error {
 				}
 				return nil
 			} else {
+				// TODO: logging
 				continue
 			}
 		}
@@ -94,6 +95,6 @@ func (src amqpDataSource) handleMessage(msg *amqplib.Message) error {
 
 	jsonData := rawJson.(map[string]any)
 	res := src.criteria.Evaluate(jsonData)
-	fmt.Printf("Result: %t\n", res)
+	fmt.Printf("AMQP Result: %t\n", res)
 	return nil
 }

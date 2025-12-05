@@ -14,6 +14,7 @@ import (
 
 	"inwsoft.com/queuerator/internal/amqp"
 	"inwsoft.com/queuerator/internal/config"
+	"inwsoft.com/queuerator/internal/mqtt"
 )
 
 type baseConfig struct {
@@ -43,6 +44,7 @@ func main() {
 	conf := make(config.Config, 0)
 
 	amqpRegex := regexp.MustCompile("(?i)^amqp(?:s{0,1})*://")
+	mqttRegex := regexp.MustCompile("(?i)^mqtt(?:s{0,1})*://")
 	for _, a := range arr {
 		var base baseConfig
 		err := json.Unmarshal(a, &base)
@@ -54,17 +56,23 @@ func main() {
 		isAmqp := base.Protocol == "amqp" || base.Protocol == "" && amqpRegex.MatchString(base.Url)
 		if isAmqp {
 			var amqpConf amqp.AMQPDataSourceConfig
-			raw, err := json.Marshal(a)
-			if err != nil {
-				panic(err)
-			}
-
-			err = json.Unmarshal(raw, &amqpConf)
+			err = json.Unmarshal(a, &amqpConf)
 			if err != nil {
 				panic(err)
 			}
 
 			conf = append(conf, amqpConf)
+		}
+
+		isMqtt := base.Protocol == "mqtt" || base.Protocol == "" && mqttRegex.MatchString(base.Url)
+		if isMqtt {
+			var mqttConf mqtt.MQTT3DataSourceConfig
+			err = json.Unmarshal(a, &mqttConf)
+			if err != nil {
+				panic(err)
+			}
+
+			conf = append(conf, mqttConf)
 		}
 	}
 

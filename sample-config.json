@@ -25,5 +25,14 @@
         }
       ]
     }
+  },
+  {
+    "url": "mqtt://localhost:1883",
+    "clientId": "weewoo",
+    "topics": ["test/topic"],
+    "criteria": {
+      "isDisjunctive": true,
+      "isNegated": true
+    }
   }
 ]
